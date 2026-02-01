@@ -12,14 +12,14 @@ export const register = async (req: Request, res: Response) => {
 
         // need to validate the name email and password in the route request validation       
         const userObject = { name, email, password };
-        const result: any = await authService.registerUser(userObject);
+        const userId: any = await authService.registerUser(userObject);
 
-        if (result) {
+        if (userId) {
             return res.status(201).json({
                 success: true,
                 message: "User Successfully Registered",
                 data: {
-                    result
+                    userId: userId
                 }
             });
         } else {
@@ -30,7 +30,7 @@ export const register = async (req: Request, res: Response) => {
         }
 
     } catch (e: any) {
-        res.status(400).json({
+        res.status(409).json({
             success: false,
             message: e.message || "Registration failed"
         });

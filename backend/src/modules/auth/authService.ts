@@ -13,12 +13,10 @@ export const registerUser = async (userObject: any) => {
 
     const hashPassword: string = await bcrypt.hash(userObject.password, 10); // saltRounds 10–12 recommended
 
-    const user = {
+    return await authRepository.createUser({
         name: userObject.name,
         email: userObject.email,
         password: hashPassword
-    };
-
-    return await authRepository.createUser(user);
+    });
 };
 
