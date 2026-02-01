@@ -24,15 +24,15 @@ export const register = async (req: Request, res: Response) => {
             });
         } else {
             return res.status(401).json({
-                success: true,
-                message: "User Registration Failed"
+                success: false,
+                message: "Email already registered"
             });
         }
 
     } catch (e: any) {
-        res.status(403).json({
+        res.status(400).json({
             success: false,
-            message: e.message
+            message: e.message || "Registration failed"
         });
     }
 };

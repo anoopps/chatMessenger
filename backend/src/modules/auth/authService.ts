@@ -8,7 +8,7 @@ export const registerUser = async (userObject: any) => {
     const isUserExist = await authRepository.isUserExist(userObject.email);
 
     if (isUserExist) {
-        return 0;
+        throw new Error("Email already registered");
     }
 
     const hashPassword: string = await bcrypt.hash(userObject.password, 10); // saltRounds 10–12 recommended
