@@ -9,6 +9,11 @@ export const userValidator = [
     body("password").notEmpty().isLength({ min: 6 }).withMessage("Password min 6 chars")
 ];
 
+export const loginValidator = [
+    body("email").isEmail().notEmpty().withMessage("EMail is required"),
+    body("password").notEmpty().isLength({ min: 6 }).withMessage("Password min 6 chars")
+];
+
 export const validateRequest = async (req: Request, res: Response, next: NextFunction) => {
 
     const errors = validationResult(req);

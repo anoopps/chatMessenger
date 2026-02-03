@@ -25,3 +25,12 @@ export const isUserExist = async (email: string) => {
         return false;
     }
 }
+
+export const getUser = async (email: string) => {
+
+    if (email) {
+        const [user]: any = await db.query("SELECT * FROM users where email = ?", [email]);
+        return user[0];
+    }
+    return [];
+}

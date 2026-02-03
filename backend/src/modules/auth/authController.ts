@@ -1,9 +1,29 @@
 import { Request, Response } from "express";
 import * as authService from "./authService";
 
-export const login = (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
 
+    try {
+        const result = await authService.userLogin(req.body);
+        console.log(result);
 
+        if (!result) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid user login"
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Login Successful",
+            data: result
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            status: false,
+            message: error
+        });
+    }
 };
 
 export const register = async (req: Request, res: Response) => {
