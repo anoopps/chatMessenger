@@ -1,9 +1,10 @@
 // authService
 import * as authRepository from "./authRepository";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { RegisterInput, LoginInput, AuthResponse } from "./auth.types";
 import bcrypt from "bcryptjs";
 
-export const registerUser = async (userObject: any) => {
+export const registerUser = async (userObject: RegisterInput): Promise<number> => {
 
     // validate user id exists or not
     const isUserExist = await authRepository.isUserExist(userObject.email);
@@ -22,29 +23,29 @@ export const registerUser = async (userObject: any) => {
 };
 
 
-export const userLogin = async (userObject: any) => {
+export const userLogin = async (userObject: LoginInput): Promise<AuthResponse> => {
 
     // validate user id exists or not
     const user = await authRepository.getUser(userObject.email);
-    if (!user) throw new Error("Invalid Login");
-
-    if (!user.password || !userObject.password) {
-        throw new Error("Password not found");
+    if (!user || !user.password) {
+        throw new Error("Invalid email or password");
     }
+
     const isMatch = await bcrypt.compare(userObject.password, user.password);
     if (!isMatch) {
-        throw new Error("Password mismatch");
+        throw new Error("Invalid email or password");
     }
 
-    const jwtSecretKey = process.env.JWT_SECRET || "mysecret123";
+    if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET not configured");
+    }
 
     const token = jwt.sign(
         { userId: user.id, email: user.email },
-        jwtSecretKey as string,
+        process.env.JWT_SECRET as string,
         { expiresIn: "24h" }
     );
-    console.log("token");
-    console.log(token);
+
     return {
         token,
         user: {
