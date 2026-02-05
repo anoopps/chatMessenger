@@ -1,7 +1,6 @@
 // validator
 import { Request, Response, NextFunction } from "express";
 import { body, validationResult } from "express-validator";
-import { error } from "node:console";
 
 export const userValidator = [
     body("name").isString().notEmpty().withMessage("Name is required"),
