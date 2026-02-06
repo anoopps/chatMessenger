@@ -10,10 +10,9 @@ export const createChatRoom = async (req: Request, res: Response) => {
         const chatRoomName = req.body.name ?? null;
         const memberId = req.body.memberId ?? null;
         const memberIds = req.body.memberIds ?? null;
-        const user = req.user;
-        // console.log(user);
+        const user = req.user?.userId;
 
-        let dataObj;
+        let dataObj: any;
 
         if (!isGroup) {
             dataObj = {
@@ -24,17 +23,16 @@ export const createChatRoom = async (req: Request, res: Response) => {
         } else {
             dataObj = {
                 isGroup,
+                chatRoomName,
                 memberIds,
                 user
             };
         }
-
         const result = await chatService.createChatRoom(dataObj);
-
         res.status(201).json({
             success: true,
             message: "Chatroom Successfully Created",
-            result
+            data: result
         });
     } catch (e: any) {
         res.status(400).json({
