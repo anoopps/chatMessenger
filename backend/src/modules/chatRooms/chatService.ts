@@ -12,13 +12,14 @@ export const createChatRoom = async (chatRoomObj: any) => {
         let chatRoomMembers = [];
         if (!chatRoomObj.isGroup) {
             // cross check member and user login id
-            if (!chatRoomObj.memberId && chatRoomObj.memberId == userId) {
+            if (!chatRoomObj.memberId || chatRoomObj.memberId === userId) {
                 throw new Error("Invalid Member id");
             }
             chatRoomMembers.push(chatRoomObj.memberId);
             chatRoomMembers.push(chatRoomObj.user);
         } else if (chatRoomObj.isGroup) {
-            chatRoomMembers.push(chatRoomObj.memberIds);
+            chatRoomMembers.push(...chatRoomObj.memberIds);
+            chatRoomMembers.push(userId);
         }
 
         // fetch and also validate member id from user login table
