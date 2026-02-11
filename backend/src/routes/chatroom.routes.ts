@@ -5,7 +5,7 @@ import * as chatController from "../modules/chatRooms/chatController";
 const router = Router();
 
 router.post("/", authenticateToken, chatController.createChatRoom);
-// router.get("/", authenticateToken, getMyChatRooms);
+router.get("/", authenticateToken, chatController.getMyChatRooms);
 // router.post("/:roomId/messages", authenticateToken, sendMessage);
 
 

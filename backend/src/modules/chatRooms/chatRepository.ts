@@ -3,8 +3,13 @@ import { db } from "../../config/db";
 export interface Member {
     userId: number;
     name: string;
-}
+};
 
+interface Participant {
+    userId: number;
+    name: string;
+    email: string;
+};
 
 export const create = async (dataObj: any) => {
 
@@ -40,4 +45,60 @@ export const getMembers = async (members: number[]): Promise<Member[]> => {
     );
 
     return rows;
+};
+
+export const isChatRoomExists = async (members: number[]) => {
+
+    let chatExistObj = {};
+
+    const [rows]: any = await db.query(`SELECT crm.chat_room_id 
+        FROM chat_room_members AS crm
+        INNER JOIN chat_rooms AS cr ON cr.id = crm.chat_room_id AND cr.is_group = 0
+        WHERE crm.user_id IN (?) 
+        GROUP BY crm.chat_room_id 
+        HAVING COUNT(DISTINCT crm.user_id) = 2
+        `, [members]);
+
+    if (rows) {
+        return {
+            isExists: true,
+            chatRoomId: rows[0].chat_room_id
+        }
+    }
+    return {
+        isExists: false,
+        chatRoomId: 0
+    };
+};
+
+export const getChatRoomIds = async (userId: number): Promise<number[]> => {
+
+    if (!userId) return [];
+
+    const [resultChatRoomIds] = await db.query("SELECT chat_room_id FROM chat_room_members WHERE user_id = ?", [userId]);
+
+    const chatRoomIds: number[] = (resultChatRoomIds as any[]).map(
+        row => row.chat_room_id
+    );
+    return chatRoomIds;
+};
+
+export const chatRoomDetails = async (chatRoomIds) => {
+
+    const [result] = await db.query("SELECT * FROM chat_rooms where id IN(?)", [chatRoomIds]);
+    return result;
+};
+
+
+
+export const getChatParticipants = async (roomId: number): Promise<Participant[]> => {
+    const [rows] = await db.query<Participant[]>(
+        `SELECT u.id AS userId, u.name, u.email
+     FROM chat_room_members crm
+     JOIN users u ON u.id = crm.user_id
+     WHERE crm.chat_room_id = ?`,
+        [roomId]
+    );
+
+    return rows; // IMPORTANT
 };

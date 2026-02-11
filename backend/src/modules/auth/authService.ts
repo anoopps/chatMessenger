@@ -33,7 +33,7 @@ export const userLogin = async (userObject: LoginInput): Promise<AuthResponse> =
 
     const isMatch = await bcrypt.compare(userObject.password, user.password);
     if (!isMatch) {
-        throw new Error("Invalid email or password");
+        throw new Error("password");
     }
 
     if (!process.env.JWT_SECRET) {

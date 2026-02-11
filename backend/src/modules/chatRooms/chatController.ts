@@ -9,7 +9,7 @@ export const createChatRoom = async (req: Request, res: Response) => {
         const isGroup = req.body.isGroup;
         const chatRoomName = req.body.name ?? null;
         const memberId = req.body.memberId ?? null;
-        const memberIds = req.body.memberIds ?? null;
+        const memberIds = req.body.memberId ?? null;
         const user = req.user?.userId;
 
         let dataObj: any;
@@ -24,10 +24,11 @@ export const createChatRoom = async (req: Request, res: Response) => {
             dataObj = {
                 isGroup,
                 chatRoomName,
-                memberIds,
+                memberIds: [...memberIds],
                 user
             };
         }
+
         const result = await chatService.createChatRoom(dataObj);
         res.status(201).json({
             success: true,
@@ -42,8 +43,24 @@ export const createChatRoom = async (req: Request, res: Response) => {
     }
 };
 
+// get loggedIn user chatroom 
 export const getMyChatRooms = async (req: Request, res: Response) => {
 
+    try {
+
+        const user = req.user?.userId;
+        const data = await chatService.getChatrooms(user);
+
+        return res.status(200).json({
+            success: true,
+            data
+        });
+    } catch (error: any) {
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
 };
 
 export const sendMessage = async (req: Request, res: Response) => {
