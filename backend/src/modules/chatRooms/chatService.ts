@@ -21,24 +21,35 @@ export const createChatRoom = async (chatRoomObj: any) => {
         let userId = chatRoomObj.user;
         let chatRoomName = chatRoomObj.chatRoomName ?? null;
         let response = {};
-        let chatRoomMembers = [];
+        let chatRoomMembers = [userId];
         let isChatRoom = {
             isExists: false,
             chatRoomId: 0
         };;
 
-        // 1. Collect all potential IDs
+        // 1. Initialize and ensure the current user is always included
         if (!chatRoomObj.isGroup) {
-            // cross check member and user login id
-            if (!chatRoomObj.memberId || chatRoomObj.memberId === userId) {
-                throw new Error("Invalid Member id");
-            }
-            chatRoomMembers.push(chatRoomObj.memberId, userId);
+            // Validation for 1-on-1 chats
+            const targetMemberId = chatRoomObj.memberIds[0];
 
-            // verify the chatroom already exists  
+            // Check if memberId exists AND isn't the current user
+            if (!targetMemberId || targetMemberId === userId) {
+                throw new Error("Invalid Member ID: You cannot start a 1-on-1 chat with yourself");
+            }
+
+            chatRoomMembers.push(targetMemberId);
+
+            // Verify if a private chatroom already exists between these two
             isChatRoom = await chatRepository.isChatRoomExists(chatRoomMembers);
-        } else if (chatRoomObj.isGroup) {
-            chatRoomMembers.push(...chatRoomObj.memberIds, userId);
+
+        } else {
+            // Validation for Group chats
+            if (Array.isArray(chatRoomObj.memberIds) && chatRoomObj.memberIds.length > 0) {
+                // Merge IDs and remove any accidental duplicates (like if userId was also in memberIds)
+                chatRoomMembers = [...new Set([...chatRoomObj.memberIds, userId])];
+            } else {
+                throw new Error("Group chats must have at least one other member.");
+            }
         }
 
         // 2. Clean the list
@@ -86,6 +97,7 @@ export const createChatRoom = async (chatRoomObj: any) => {
 
         return response;
     } catch (e: any) {
+        console.log(e);
         throw new Error(e.message);
     }
 };

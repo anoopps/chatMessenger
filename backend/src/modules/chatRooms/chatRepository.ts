@@ -44,7 +44,7 @@ export const getMembers = async (members: number[]): Promise<Member[]> => {
         [members]
     );
 
-    return rows;
+    return rows as Member[];
 };
 
 export const isChatRoomExists = async (members: number[]) => {
@@ -56,10 +56,10 @@ export const isChatRoomExists = async (members: number[]) => {
         INNER JOIN chat_rooms AS cr ON cr.id = crm.chat_room_id AND cr.is_group = 0
         WHERE crm.user_id IN (?) 
         GROUP BY crm.chat_room_id 
-        HAVING COUNT(DISTINCT crm.user_id) = 2
+        HAVING COUNT(DISTINCT crm.user_id) = 2 AND COUNT(*) = 2
         `, [members]);
 
-    if (rows) {
+    if (rows.length) {
         return {
             isExists: true,
             chatRoomId: rows[0].chat_room_id
@@ -83,16 +83,16 @@ export const getChatRoomIds = async (userId: number): Promise<number[]> => {
     return chatRoomIds;
 };
 
-export const chatRoomDetails = async (chatRoomIds) => {
+export const chatRoomDetails = async (chatRoomIds: Array<number>) => {
 
-    const [result] = await db.query("SELECT * FROM chat_rooms where id IN(?)", [chatRoomIds]);
+    const [result] = await db.query("SELECT * FROM chat_rooms where id IN(?) ORDER BY created_at DESC", [chatRoomIds]);
     return result;
 };
 
 
 
 export const getChatParticipants = async (roomId: number): Promise<Participant[]> => {
-    const [rows] = await db.query<Participant[]>(
+    const [rows] = await db.query(
         `SELECT u.id AS userId, u.name, u.email
      FROM chat_room_members crm
      JOIN users u ON u.id = crm.user_id
@@ -100,5 +100,5 @@ export const getChatParticipants = async (roomId: number): Promise<Participant[]
         [roomId]
     );
 
-    return rows; // IMPORTANT
+    return rows as Participant[]; // IMPORTANT
 };

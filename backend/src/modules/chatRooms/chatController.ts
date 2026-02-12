@@ -6,28 +6,29 @@ export const createChatRoom = async (req: Request, res: Response) => {
     try {
 
         // chatService        
-        const isGroup = req.body.isGroup;
+        const isGroup = Boolean(req.body.isGroup);
         const chatRoomName = req.body.name ?? null;
-        const memberId = req.body.memberId ?? null;
-        const memberIds = req.body.memberId ?? null;
         const user = req.user?.userId;
 
-        let dataObj: any;
+        let memberIds: Array<number> = [];
+        const memberId = req.body.memberId ?? null;
 
-        if (!isGroup) {
-            dataObj = {
-                isGroup,
-                memberId,
-                user
-            };
-        } else {
-            dataObj = {
-                isGroup,
-                chatRoomName,
-                memberIds: [...memberIds],
-                user
-            };
+        if (!user) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
         }
+
+        if (memberId) {
+            memberIds = memberIds.concat(memberId);
+        }
+
+        const validatedMemberIds = memberIds.map(id => Number(id)).filter(id => !isNaN(id));
+
+        let dataObj = {
+            isGroup,
+            chatRoomName,
+            memberIds: validatedMemberIds,
+            user
+        };
 
         const result = await chatService.createChatRoom(dataObj);
         res.status(201).json({
