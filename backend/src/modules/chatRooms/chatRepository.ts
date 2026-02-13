@@ -91,12 +91,12 @@ export const chatRoomDetails = async (chatRoomIds: Array<number>) => {
 
 
 
-export const getChatParticipants = async (roomId: number): Promise<Participant[]> => {
+export const getChatParticipants = async (roomId: number[]): Promise<Participant[]> => {
     const [rows] = await db.query(
-        `SELECT u.id AS userId, u.name, u.email
+        `SELECT u.id AS userId, u.name, u.email,crm.chat_room_id
      FROM chat_room_members crm
      JOIN users u ON u.id = crm.user_id
-     WHERE crm.chat_room_id = ?`,
+     WHERE crm.chat_room_id IN (?)`,
         [roomId]
     );
 

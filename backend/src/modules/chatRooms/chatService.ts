@@ -103,25 +103,49 @@ export const createChatRoom = async (chatRoomObj: any) => {
 };
 
 // export const 
-export const getChatrooms = async (userId: number): Promise<ChatResponse> => {
+export const getChatrooms = async (userId: number) => {
 
     // Find all chat_room_ids where user is a member
-    const chatRoomIds = await chatRepository.getChatRoomIds(userId);
+    const chatRoomIds: number[] = await chatRepository.getChatRoomIds(userId);
     let response = [];
+
+    if (!chatRoomIds.length) return [];
 
     // Fetch chatroom details 
     if (chatRoomIds.length && Array.isArray(chatRoomIds)) {
         const chatRoomDetails = await chatRepository.chatRoomDetails(chatRoomIds);
-        // console.log(chatRoomDetails);
+
+        // Single query for all participants
+        const allParticipants = await chatRepository.getChatParticipants(chatRoomIds);
+
+        const participantsMap = new Map<number, Participant[]>();
+        console.log(allParticipants);
+
+        for (const participant of allParticipants) {
+
+            const roomId = participant.chat_room_id;
+
+            if (!participantsMap.has(roomId)) {
+                participantsMap.set(roomId, []);
+            }
+
+            participantsMap.get(roomId)?.push({
+                userId: participant.userId,
+                name: participant.name,
+                email: participant.email
+            });
+        }
+
+        console.log(participantsMap);
+
 
         // Fetch participants for each chatroom
         for (const rooms of chatRoomDetails) {
-            const participants = await chatRepository.getChatParticipants(rooms.id);
             let chatRoomObj = {
                 "id": rooms.id,
                 "name": rooms.name,
                 "isGroup": rooms.is_group,
-                "participants": participants
+                "participants": participantsMap.get(rooms.id) || []
             };
             response.push(chatRoomObj);
         }
