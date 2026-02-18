@@ -1,6 +1,7 @@
 // chatService
 import { promises } from "node:dns";
 import * as chatRepository from "./chatRepository";
+import { AppError } from "../../utils/AppError";
 
 export interface Participant {
     userId: number;
@@ -152,3 +153,34 @@ export const getChatrooms = async (userId: number) => {
     }
     return response;
 };
+
+export const validateAndSendMessage = async (userId: number, chatRoomId: any, message: string) => {
+
+
+
+    if (!chatRoomId) {
+        throw new AppError("Chat room id is empty", 400);
+    }
+    // Validate chatroom exists
+    const isChatRoomExists = await chatRepository.findChatroomById(chatRoomId);
+
+    if (!isChatRoomExists) {
+        throw new AppError("Invalid chatroom", 404);
+    }
+
+    // Validate user belongs to chatroom
+    const participant = await chatRepository.isUserInChatRoom(userId, chatRoomId);
+    if (!participant) {
+        throw new AppError("Invalid participant", 403);
+    }
+
+    if (!message || !message.trim()) {
+        throw new AppError("Message cannot be empty", 400);
+    }
+    // Save message
+    const result = await chatRepository.createMessage(chatRoomId, userId, message);
+
+    return result;
+
+
+}

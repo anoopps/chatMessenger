@@ -83,14 +83,14 @@ export const getChatRoomIds = async (userId: number): Promise<number[]> => {
     return chatRoomIds;
 };
 
+// get chatroom details
 export const chatRoomDetails = async (chatRoomIds: Array<number>) => {
 
     const [result] = await db.query("SELECT * FROM chat_rooms where id IN(?) ORDER BY created_at DESC", [chatRoomIds]);
     return result;
 };
 
-
-
+// get chatParticipants
 export const getChatParticipants = async (roomId: number[]): Promise<Participant[]> => {
     const [rows] = await db.query(
         `SELECT u.id AS userId, u.name, u.email,crm.chat_room_id
@@ -102,3 +102,44 @@ export const getChatParticipants = async (roomId: number[]): Promise<Participant
 
     return rows as Participant[]; // IMPORTANT
 };
+
+export const findChatroomById = async (roomId: number) => {
+    const [rows] = await db.execute(
+        "SELECT id FROM chat_rooms WHERE id = ?",
+        [roomId]
+    );
+    console.log(rows);
+    return rows[0];
+};
+
+// check user exists in the chatroom
+export const isUserInChatRoom = async (userId: number, chatRoomId: number): Promise<Boolean> => {
+
+    const [rows] = await db.execute(
+        "SELECT 1 FROM chat_room_members WHERE chat_room_id = ? AND user_id = ?",
+        [chatRoomId, userId]
+    );
+    return rows.length > 0;
+}
+
+export const createMessage = async (chatRoomId: number, userId: number, message: string) => {
+    try {
+        const [result] = await db.execute(
+            "INSERT INTO messages (chat_room_id, sender_id, message) VALUES (?, ?, ?)",
+            [chatRoomId, userId, message]
+        );
+
+        let messageObj = {
+            id: result.insertId,
+            chatroomId: chatRoomId,
+            senderId: userId,
+            message,
+            createdAt: new Date()
+        };
+        return messageObj;
+    } catch (error: any) {
+        //TODO use centralized error handler here 
+        console.log(error.message);
+        return {};
+    }
+}

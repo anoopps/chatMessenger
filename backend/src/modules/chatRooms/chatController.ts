@@ -66,4 +66,25 @@ export const getMyChatRooms = async (req: Request, res: Response) => {
 
 export const sendMessage = async (req: Request, res: Response) => {
 
+    try {
+        console.log(req.body);
+        const chatRoomId = req.params.roomId;
+        const userId = req.user?.userId;
+        const { message } = req.body;
+
+        const data = await chatService.validateAndSendMessage(userId, chatRoomId, message);
+        res.status(201).json({
+            success: true,
+            message: "Message sent successfully",
+            data
+        });
+    } catch (error: any) {
+
+        if (error.isOperational) {
+            res.status(error.statusCode).json({
+                success: false,
+                error: error.message
+            });
+        }
+    }
 };
