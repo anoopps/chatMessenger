@@ -1,6 +1,7 @@
 // chat controller
 import { Request, Response } from "express";
 import * as chatService from "./chatService";
+import { getIO } from "../../sockets";
 
 export const createChatRoom = async (req: Request, res: Response) => {
     try {
@@ -71,8 +72,15 @@ export const sendMessage = async (req: Request, res: Response) => {
         const chatRoomId = req.params.roomId;
         const userId = req.user?.userId;
         const { message } = req.body;
+        const io = getIO();
 
         const data = await chatService.validateAndSendMessage(userId, chatRoomId, message);
+
+        const roomName = `chatroom_${chatRoomId}`;
+
+        // Emit to room
+        io.to(roomName).emit("receive_message", data);
+
         res.status(201).json({
             success: true,
             message: "Message sent successfully",

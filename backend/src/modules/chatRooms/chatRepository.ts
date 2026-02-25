@@ -139,7 +139,7 @@ export const createMessage = async (chatRoomId: number, userId: number, message:
         return messageObj;
     } catch (error: any) {
         //TODO use centralized error handler here 
-        console.log(error.message);
+        // console.log(error.message);
         return {};
     }
 }

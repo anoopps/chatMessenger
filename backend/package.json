@@ -27,7 +27,8 @@
     "express-validator": "^7.3.1",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.16.2",
-    "socket.io": "^4.8.3"
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
