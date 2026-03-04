@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { io } from "socket.io-client";
 import LoginForm from "./components/LoginForm";
 import ChatRoomList from "./components/ChatRoomList";
 import MessageInput from "./components/MessageInput";
 import MessageList from "./components/MessageList";
+import Profile from "./components/Profile";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -18,7 +18,11 @@ function App() {
           style={{ width: "20%" }}
         >
           {/* Login Form  */}
-          <LoginForm setUser={setUser} setToken={setToken} />
+          {!user ? (
+            <LoginForm setUser={setUser} setToken={setToken} />
+          ) : (
+            <Profile user={user} setUser={setUser} setToken={setToken} />
+          )}
 
           {/* Chat room list  */}
           <ChatRoomList />
