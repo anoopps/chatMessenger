@@ -1,6 +1,16 @@
 import React from "react";
 
-const ChatRoomList = () => {
+const ChatRoomList = ({ chatrooms, setSelectChatroom }) => {
+  console.log("Inside Chatroom ");
+  console.log(chatrooms);
+  const setMyChatRoom = (e, roomId) => {
+    e.preventDefault();
+    console.log("my selected room");
+    console.log(roomId);
+
+    setSelectChatroom(roomId);
+  };
+
   return (
     <div>
       <a
@@ -18,17 +28,22 @@ const ChatRoomList = () => {
         <span className="fs-4">ChatRooms</span>
       </a>
       <hr />
+
       <ul className="nav nav-pills flex-column mb-auto">
-        <li className="nav-item">
-          <a href="#" className="nav-link active">
-            chatroom_1
-          </a>
-        </li>
-        <li>
-          <a href="#" className="nav-link text-white">
-            chatroom_2
-          </a>
-        </li>
+        {chatrooms &&
+          chatrooms.map((room) => {
+            return (
+              <li className="nav-item" key={room.id}>
+                <a
+                  href="#"
+                  className="nav-link"
+                  onClick={(e) => setMyChatRoom(e, room.id)}
+                >
+                  {room.name}
+                </a>
+              </li>
+            );
+          })}
       </ul>
     </div>
   );

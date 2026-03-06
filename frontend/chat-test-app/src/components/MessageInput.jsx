@@ -9,9 +9,7 @@ const MessageInput = () => {
           className="form-control bg-dark text-light border-secondary me-2"
           placeholder="Type message..."
         />
-        <button className="btn btn-primary" onClick="">
-          Send
-        </button>
+        <button className="btn btn-primary">Send</button>
       </div>
     </>
   );

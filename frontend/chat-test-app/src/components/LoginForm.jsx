@@ -17,16 +17,15 @@ const LoginForm = ({ setUser, setToken }) => {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-      console.log(data);
+      const user = await response.json();
+
       if (!response.ok) {
         console.error("Login failed");
         return;
       }
-      setUser(data.user);
-      setToken(data.token);
-
-      localStorage.setItem("token", data.token);
+      setUser(user.data.user);
+      setToken(user.data.token);
+      localStorage.setItem("token", user.data.token);
     } catch (e) {
       console.error("Error:", e.message);
     }
