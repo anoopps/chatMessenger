@@ -1,7 +1,8 @@
 // chat controller
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import * as chatService from "./chatService";
 import { getIO } from "../../sockets";
+import console from "node:console";
 
 export const createChatRoom = async (req: Request, res: Response) => {
     try {
@@ -96,3 +97,43 @@ export const sendMessage = async (req: Request, res: Response) => {
         }
     }
 };
+
+export const getMessages = async (req: Request, res: Response) => {
+
+    try {
+        // reads the chatroom id
+        const chatroomId = Number(req.params.roomId);
+        const userId = Number(req.user?.userId);
+
+        if (!userId) {
+            throw new Error("Unauthorized");
+        }
+
+        if (!chatroomId) {
+            throw new Error("ChatroomId is required");
+        }
+
+        // validate the chatroom id 
+        const isValidChatRoom = await chatService.isChatRoomParticipant(userId, chatroomId);
+
+        // if not a valid chatroom participant
+        if (!isValidChatRoom) {
+            throw new Error("User is not part of this chatroom");
+        }
+
+        // queries the message from the database
+        const response = await chatService.getChatroomMessages(chatroomId);
+
+        // return response 
+        return res.status(200).json({
+            success: true,
+            data: response
+        });
+
+    } catch (error: any) {
+        return res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+}

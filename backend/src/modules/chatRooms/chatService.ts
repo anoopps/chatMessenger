@@ -16,6 +16,17 @@ export interface ChatResponse {
     participants: Participant[];
 };
 
+export interface UserInterface {
+    id: number;
+    name: string;
+}
+export interface UserMessages {
+    id: number;
+    message: string;
+    createAt: string;
+    user: UserInterface[];
+}
+
 export const createChatRoom = async (chatRoomObj: any) => {
 
     try {
@@ -181,6 +192,30 @@ export const validateAndSendMessage = async (userId: number, chatRoomId: any, me
     const result = await chatRepository.createMessage(chatRoomId, userId, message);
 
     return result;
+}
 
+// is chatroom Participant
+export const isChatRoomParticipant = async (userId: number, chatRoomId: any) => {
+    const participant = await chatRepository.isUserInChatRoom(userId, chatRoomId);
+    if (!participant) {
+        return false;
+    }
+    return true;
+}
 
+export const getChatroomMessages = async (chatroomId: number): Promise<UserMessages[]> => {
+
+    const messages = await chatRepository.getChatRoomMessages(chatroomId);
+
+    const response = messages.map((msg: any) => ({
+        id: msg.id,
+        message: msg.message,
+        createdAt: msg.created_at,
+        user: {
+            id: msg.userId,
+            name: msg.name
+        }
+    }));
+
+    return response;
 }

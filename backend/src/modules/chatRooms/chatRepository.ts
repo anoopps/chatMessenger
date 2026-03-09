@@ -108,7 +108,6 @@ export const findChatroomById = async (roomId: number) => {
         "SELECT id FROM chat_rooms WHERE id = ?",
         [roomId]
     );
-    console.log(rows);
     return rows[0];
 };
 
@@ -142,4 +141,10 @@ export const createMessage = async (chatRoomId: number, userId: number, message:
         // console.log(error.message);
         return {};
     }
+}
+
+export const getChatRoomMessages = async (chatroomId: number) => {
+
+    const [result]: any = await db.query("SELECT msg.id, msg.message, users.id as userId, users.name, msg.created_at FROM messages as msg INNER JOIN users as users on users.id = msg.sender_id WHERE chat_room_id = ? ORDER BY msg.id ASC", [chatroomId]);
+    return result;
 }

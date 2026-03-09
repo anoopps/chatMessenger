@@ -5,9 +5,10 @@ import cors from 'cors';
 
 // app definition
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+
 
 // auth router
 import authRouter from "./routes/auth.routes";
