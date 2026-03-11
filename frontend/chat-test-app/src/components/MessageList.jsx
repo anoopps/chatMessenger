@@ -1,10 +1,10 @@
 import React from "react";
 
-const MessageList = ({ messageList }) => {
+const MessageList = ({ messageList, chatRoomName }) => {
   return (
     <>
       <div className="border-bottom pb-2 mb-3">
-        <h5 className="mb-0">Chat Room: chatroom_1</h5>
+        <h5 className="mb-0">Chat Room: {chatRoomName}</h5>
       </div>
 
       {/* Messages Area */}

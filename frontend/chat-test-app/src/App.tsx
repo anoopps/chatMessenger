@@ -4,6 +4,7 @@ import ChatRoomList from "./components/ChatRoomList";
 import MessageInput from "./components/MessageInput";
 import MessageList from "./components/MessageList";
 import Profile from "./components/Profile";
+import { apiFetch } from "./utils/api.js";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -34,39 +35,24 @@ function App() {
 
   const getChatroom = async () => {
     if (!token) return;
-    const chatroomResponse = await fetch(`${API_BASE_URL}/chatrooms`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const rooms = await chatroomResponse.json();
+    const rooms = await apiFetch(
+      `${API_BASE_URL}/chatrooms`,
+      "GET",
+      token,
+      "chatrooms"
+    );
     setChatrooms(rooms.data);
   };
 
   const getMessageList = async (roomId) => {
     if (roomId) {
-      const messageResponse = await fetch(
+      let response = await apiFetch(
         `${API_BASE_URL}/chatrooms/${roomId}/messages`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        "GET",
+        token,
+        "message"
       );
-
-      if (!messageResponse.ok) {
-        throw new Error("Failed to fetch messages");
-      }
-
-      const messages = await messageResponse.json();
-      console.log("mesasge data list");
-
-      console.log(messages.data);
-
-      setMessageList(messages.data);
+      setMessageList(response.data);
     }
   };
 
