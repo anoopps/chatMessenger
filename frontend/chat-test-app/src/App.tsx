@@ -10,20 +10,27 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 function App() {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [chatrooms, setChatrooms] = useState(null);
+  const [chatrooms, setChatrooms] = useState([]);
   const [selectChatroom, setSelectChatroom] = useState(null);
-
-  console.log(user);
+  const [messageList, setMessageList] = useState([]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    console.log(storedToken);
     if (storedToken) {
       setToken(storedToken);
       setUser({ loggedIn: true });
     }
+  }, []);
+
+  useEffect(() => {
+    if (!token) return;
     getChatroom();
   }, [token]);
+
+  useEffect(() => {
+    if (!selectChatroom) return;
+    getMessageList(selectChatroom);
+  }, [selectChatroom]);
 
   const getChatroom = async () => {
     if (!token) return;
@@ -34,10 +41,33 @@ function App() {
       },
     });
 
-    console.log("chatrom dat");
     const rooms = await chatroomResponse.json();
-    console.log("My chatrooms");
     setChatrooms(rooms.data);
+  };
+
+  const getMessageList = async (roomId) => {
+    if (roomId) {
+      const messageResponse = await fetch(
+        `${API_BASE_URL}/chatrooms/${roomId}/messages`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!messageResponse.ok) {
+        throw new Error("Failed to fetch messages");
+      }
+
+      const messages = await messageResponse.json();
+      console.log("mesasge data list");
+
+      console.log(messages.data);
+
+      setMessageList(messages.data);
+    }
   };
 
   return (
@@ -60,6 +90,7 @@ function App() {
             <ChatRoomList
               chatrooms={chatrooms}
               setSelectChatroom={setSelectChatroom}
+              token={token}
             />
           )}
         </div>
@@ -67,7 +98,7 @@ function App() {
         {/* Content Section */}
         <div className="d-flex flex-column flex-fill p-3 bg-dark text-light">
           {/* Chat Header */}
-          <MessageList />
+          <MessageList messageList={messageList} />
           {/* Input Area */}
           <MessageInput />
         </div>

@@ -1,13 +1,13 @@
 import React from "react";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const ChatRoomList = ({ chatrooms, setSelectChatroom }) => {
+const ChatRoomList = ({ chatrooms, setSelectChatroom, token }) => {
   console.log("Inside Chatroom ");
   console.log(chatrooms);
-  const setMyChatRoom = (e, roomId) => {
-    e.preventDefault();
-    console.log("my selected room");
-    console.log(roomId);
 
+  const setMyChatRoom = async (e, roomId) => {
+    e.preventDefault();
+    console.log(`selected room ${roomId}`);
     setSelectChatroom(roomId);
   };
 
