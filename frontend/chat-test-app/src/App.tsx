@@ -14,6 +14,7 @@ function App() {
   const [chatrooms, setChatrooms] = useState([]);
   const [selectChatroom, setSelectChatroom] = useState(null);
   const [messageList, setMessageList] = useState([]);
+  const [sendMessage, setSendMessage] = useState(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -23,15 +24,23 @@ function App() {
     }
   }, []);
 
+  // effect to get chatrooms based on token
   useEffect(() => {
     if (!token) return;
     getChatroom();
   }, [token]);
 
+  // effect to list message based on chatroom
   useEffect(() => {
     if (!selectChatroom) return;
     getMessageList(selectChatroom);
   }, [selectChatroom]);
+
+  // effect to send message
+  useEffect(() => {
+    if (!sendMessage) return;
+    sendMyMessage(sendMessage);
+  }, [sendMessage]);
 
   const getChatroom = async () => {
     if (!token) return;
@@ -53,6 +62,23 @@ function App() {
         "message"
       );
       setMessageList(response.data);
+    }
+  };
+
+  const sendMyMessage = async (message) => {
+    if (message) {
+      console.log(selectChatroom);
+      console.log(message);
+
+      const response = await apiFetch(
+        `${API_BASE_URL}/chatrooms/${selectChatroom}/messages`,
+        "POST",
+        token,
+        "send message",
+        {
+          message,
+        }
+      );
     }
   };
 
@@ -86,7 +112,7 @@ function App() {
           {/* Chat Header */}
           <MessageList messageList={messageList} />
           {/* Input Area */}
-          <MessageInput />
+          <MessageInput setSendMessage={setSendMessage} />
         </div>
         <div className="b-example-divider b-example-vr"></div>
       </main>
