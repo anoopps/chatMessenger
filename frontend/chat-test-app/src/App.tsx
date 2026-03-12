@@ -79,6 +79,9 @@ function App() {
           message,
         }
       );
+
+      console.log(response);
+      getMessageList(selectChatroom);
     }
   };
 
