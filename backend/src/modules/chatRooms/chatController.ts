@@ -2,7 +2,7 @@
 import { Request, response, Response } from "express";
 import * as chatService from "./chatService";
 import { getIO } from "../../sockets";
-import console from "node:console";
+import console, { log } from "node:console";
 
 export const createChatRoom = async (req: Request, res: Response) => {
     try {
@@ -81,6 +81,9 @@ export const sendMessage = async (req: Request, res: Response) => {
 
         // Emit to room
         io.to(roomName).emit("receive_message", data);
+
+        const sockets = await io.in(roomName).fetchSockets();
+        console.log("Sockets in room:", sockets.length);
 
         res.status(201).json({
             success: true,

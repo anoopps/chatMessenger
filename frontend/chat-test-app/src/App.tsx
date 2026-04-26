@@ -1,3 +1,4 @@
+//app.tsx
 import { useEffect, useState } from "react";
 import LoginForm from "./components/LoginForm";
 import ChatRoomList from "./components/ChatRoomList";
@@ -5,6 +6,7 @@ import MessageInput from "./components/MessageInput";
 import MessageList from "./components/MessageList";
 import Profile from "./components/Profile";
 import { apiFetch } from "./utils/api.js";
+import { socket } from "./utils/socket";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -13,7 +15,7 @@ function App() {
   const [token, setToken] = useState(null);
   const [chatrooms, setChatrooms] = useState([]);
   const [selectChatroom, setSelectChatroom] = useState(null);
-  const [messageList, setMessageList] = useState([]);
+  const [messageList, setMessageList] = useState<any[]>([]);
   const [sendMessage, setSendMessage] = useState(null);
 
   useEffect(() => {
@@ -24,15 +26,45 @@ function App() {
     }
   }, []);
 
+  // socket receive message
+  useEffect(() => {
+    socket.on("receive_message", (message: any) => {
+      console.log("New message received..........:", message);
+
+      if (message.chatroomId === selectChatroom) {
+        setMessageList((prev) => [...prev, message]);
+      }
+    });
+
+    return () => {
+      socket.off("receive_message");
+    };
+  }, [selectChatroom]);
+
   // effect to get chatrooms based on token
   useEffect(() => {
     if (!token) return;
+
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+    });
     getChatroom();
+
+    return () => {
+      socket.disconnect();
+    };
   }, [token]);
 
   // effect to list message based on chatroom
   useEffect(() => {
     if (!selectChatroom) return;
+
+    alert(`Joining room: chatroom_${selectChatroom}`);
+
+    // socket.emit("join_room", `${selectChatroom}`);
+    socket.emit("join_room", selectChatroom);
     getMessageList(selectChatroom);
   }, [selectChatroom]);
 
@@ -65,11 +97,10 @@ function App() {
     }
   };
 
-  const sendMyMessage = async (message) => {
+  const sendMyMessage = async (message: any) => {
     if (message) {
       console.log(selectChatroom);
       console.log(message);
-
       const response = await apiFetch(
         `${API_BASE_URL}/chatrooms/${selectChatroom}/messages`,
         "POST",
@@ -79,9 +110,11 @@ function App() {
           message,
         }
       );
-
+      console.log("sent message====");
       console.log(response);
-      getMessageList(selectChatroom);
+      // getMessageList(selectChatroom);
+
+      // const newMessage = response.data;
     }
   };
 
