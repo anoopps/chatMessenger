@@ -1,10 +1,10 @@
 import * as userRepository from "./userRepository";
-import { user } from "./user.types";
+import { userData } from "./user.types";
 
 export const getUser = async (id: number) => {
 
 }
 
-export const updateUser = async () => {
+export const updateUser = async (id: number, userData: userData) => {
 
 }
