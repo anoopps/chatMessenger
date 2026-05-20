@@ -18,6 +18,9 @@ app.use('/api/v1/auth', authRouter);
 import chatRouter from "./routes/chatroom.routes";
 app.use('/api/v1/chatrooms', chatRouter);
 
+import userRouter from "./routes/user.routes";
+app.use('/api/v1/user', userRouter);
+
 app.use('/', (req, res) => {
     res.status(200).json({ message: "Server is up and running" });
 });
