@@ -18,6 +18,7 @@ app.use('/api/v1/auth', authRouter);
 import chatRouter from "./routes/chatroom.routes";
 app.use('/api/v1/chatrooms', chatRouter);
 
+// user router
 import userRouter from "./routes/user.routes";
 app.use('/api/v1/user', userRouter);
 

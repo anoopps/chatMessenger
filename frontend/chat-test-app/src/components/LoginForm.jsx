@@ -25,7 +25,15 @@ const LoginForm = ({ setUser, setToken }) => {
       }
       setUser(user.data.user);
       setToken(user.data.token);
-      localStorage.setItem("token", user.data.token);
+
+      const now = new Date();
+
+      const item = {
+        token: user.data.token,
+        expiry: now.getTime() + 60 * 60 * 1000,
+      };
+
+      localStorage.setItem("token", JSON.stringify(item));
     } catch (e) {
       console.error("Error:", e.message);
     }

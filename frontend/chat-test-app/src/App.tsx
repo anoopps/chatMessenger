@@ -1,4 +1,3 @@
-//app.tsx
 import { useEffect, useState } from "react";
 import LoginForm from "./components/LoginForm";
 import ChatRoomList from "./components/ChatRoomList";
@@ -19,25 +18,40 @@ function App() {
   const [sendMessage, setSendMessage] = useState(null);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setToken(storedToken);
+    const localToken = localStorage.getItem("token");
+    console.log(`Stored token ${JSON.stringify(localToken)}`);
+
+    const item = JSON.parse(localToken);
+    const now = new Date();
+    console.log(item);
+    // Check expiry
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem("token");
+      return null;
+    }
+
+    if (item.token) {
+      setToken(item.token);
       setUser({ loggedIn: true });
     }
   }, []);
 
   // socket receive message
   useEffect(() => {
-    socket.on("receive_message", (message: any) => {
-      console.log("New message received..........:", message);
+    const handler = (message: any) => {
+      console.log("New message received:", message);
+      console.log("Current room:", selectChatroom);
 
-      if (message.chatroomId === selectChatroom) {
+      // Ensure only messages for current room are added
+      if (Number(message.chatroomId) === Number(selectChatroom)) {
         setMessageList((prev) => [...prev, message]);
       }
-    });
+    };
+
+    socket.on("receive_message", handler);
 
     return () => {
-      socket.off("receive_message");
+      socket.off("receive_message", handler);
     };
   }, [selectChatroom]);
 
@@ -98,6 +112,34 @@ function App() {
   };
 
   const sendMyMessage = async (message: any) => {
+    if (!message) return;
+
+    const tempMessage = {
+      id: Date.now(), // temporary ID
+      chatroomId: selectChatroom,
+      senderId: user?.userId || "me",
+      message,
+      createdAt: new Date(),
+    };
+
+    setMessageList((prev) => [...prev, tempMessage]);
+
+    try {
+      const response = await apiFetch(
+        `${API_BASE_URL}/chatrooms/${selectChatroom}/messages`,
+        "POST",
+        token,
+        "send message",
+        { message }
+      );
+
+      console.log("Server response:", response);
+    } catch (err) {
+      console.error("Send failed:", err);
+    }
+  };
+
+  const sendMyMessage02 = async (message: any) => {
     if (message) {
       console.log(selectChatroom);
       console.log(message);
@@ -112,9 +154,6 @@ function App() {
       );
       console.log("sent message====");
       console.log(response);
-      // getMessageList(selectChatroom);
-
-      // const newMessage = response.data;
     }
   };
 
