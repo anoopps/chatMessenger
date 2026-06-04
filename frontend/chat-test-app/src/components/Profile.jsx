@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Profile = ({ user, setUser, setToken }) => {
   const handleLogout = () => {
@@ -28,9 +29,9 @@ const Profile = ({ user, setUser, setToken }) => {
 
         <ul className="dropdown-menu text-small shadow">
           <li>
-            <a className="dropdown-item" href="#">
+            <Link className="dropdown-item" to="/profile">
               Profile
-            </a>
+            </Link>
           </li>
           <li>
             <hr className="dropdown-divider" />

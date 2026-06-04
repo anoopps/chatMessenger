@@ -6,6 +6,8 @@ import MessageList from "./components/MessageList";
 import Profile from "./components/Profile";
 import { apiFetch } from "./utils/api.js";
 import { socket } from "./utils/socket";
+import UserProfile from "./components/UserProfile";
+import { Routes, Route } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -19,18 +21,17 @@ function App() {
 
   useEffect(() => {
     const localToken = localStorage.getItem("token");
-    console.log(`Stored token ${JSON.stringify(localToken)}`);
+    console.log(`Stored token ${localToken}`);
 
     const item = JSON.parse(localToken);
     const now = new Date();
-    console.log(item);
-    // Check expiry
-    if (now.getTime() > item.expiry) {
+
+    if (now.getTime() > item?.expiry) {
       localStorage.removeItem("token");
       return null;
     }
 
-    if (item.token) {
+    if (item?.token) {
       setToken(item.token);
       setUser({ loggedIn: true });
     }
@@ -158,40 +159,49 @@ function App() {
   };
 
   return (
-    <div data-bs-theme="dark">
-      <main className="d-flex flex-nowrap">
-        {/* Sidebar Section */}
-        <div
-          className="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary"
-          style={{ width: "20%" }}
-        >
-          {/* Login Form  */}
-          {!token ? (
-            <LoginForm setUser={setUser} setToken={setToken} />
-          ) : (
-            <Profile user={user} setUser={setUser} setToken={setToken} />
-          )}
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <div data-bs-theme="dark">
+            <main className="d-flex flex-nowrap">
+              {/* Sidebar Section */}
+              <div
+                className="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary"
+                style={{ width: "20%" }}
+              >
+                {/* Login Form  */}
+                {!token ? (
+                  <LoginForm setUser={setUser} setToken={setToken} />
+                ) : (
+                  <Profile user={user} setUser={setUser} setToken={setToken} />
+                )}
 
-          {/* Chat room list  */}
-          {token && (
-            <ChatRoomList
-              chatrooms={chatrooms}
-              setSelectChatroom={setSelectChatroom}
-              token={token}
-            />
-          )}
-        </div>
+                {/* Chat room list  */}
+                {token && (
+                  <ChatRoomList
+                    chatrooms={chatrooms}
+                    setSelectChatroom={setSelectChatroom}
+                    token={token}
+                  />
+                )}
+              </div>
 
-        {/* Content Section */}
-        <div className="d-flex flex-column flex-fill p-3 bg-dark text-light">
-          {/* Chat Header */}
-          <MessageList messageList={messageList} />
-          {/* Input Area */}
-          <MessageInput setSendMessage={setSendMessage} />
-        </div>
-        <div className="b-example-divider b-example-vr"></div>
-      </main>
-    </div>
+              {/* Content Section */}
+              <div className="d-flex flex-column flex-fill p-3 bg-dark text-light">
+                {/* Chat Header */}
+                <MessageList messageList={messageList} />
+                {/* Input Area */}
+                <MessageInput setSendMessage={setSendMessage} />
+              </div>
+              <div className="b-example-divider b-example-vr"></div>
+            </main>
+          </div>
+        }
+      />
+
+      <Route path="/profile" element={<UserProfile />} />
+    </Routes>
   );
 }
 
