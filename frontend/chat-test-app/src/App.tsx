@@ -4,6 +4,7 @@ import ChatRoomList from "./components/ChatRoomList";
 import MessageInput from "./components/MessageInput";
 import MessageList from "./components/MessageList";
 import Profile from "./components/Profile";
+import HomeScreen from "./components/HomeScreen";
 import { apiFetch } from "./utils/api.js";
 import { socket } from "./utils/socket";
 import UserProfile from "./components/UserProfile";
@@ -176,7 +177,6 @@ function App() {
                 ) : (
                   <Profile user={user} setUser={setUser} setToken={setToken} />
                 )}
-
                 {/* Chat room list  */}
                 {token && (
                   <ChatRoomList
@@ -189,10 +189,14 @@ function App() {
 
               {/* Content Section */}
               <div className="d-flex flex-column flex-fill p-3 bg-dark text-light">
-                {/* Chat Header */}
-                <MessageList messageList={messageList} />
-                {/* Input Area */}
-                <MessageInput setSendMessage={setSendMessage} />
+                {!token ? (
+                  <HomeScreen />
+                ) : (
+                  <div className="chat-container">
+                    <MessageList messageList={messageList} />
+                    <MessageInput setSendMessage={setSendMessage} />
+                  </div>
+                )}
               </div>
               <div className="b-example-divider b-example-vr"></div>
             </main>

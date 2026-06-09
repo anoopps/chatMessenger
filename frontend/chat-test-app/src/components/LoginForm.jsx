@@ -42,7 +42,9 @@ const LoginForm = ({ setUser, setToken }) => {
   return (
     <div>
       <form onSubmit={handelLogin}>
-        <span className="fs-4">Please sign in</span>
+        <span className="fs-4">
+          <h4>Please sign in</h4>
+        </span>
 
         <div className="form-floating">
           <input
@@ -69,6 +71,7 @@ const LoginForm = ({ setUser, setToken }) => {
         <button className="btn btn-primary w-100 py-2" type="submit">
           Sign in
         </button>
+        <a href="#">Register</a>
       </form>
     </div>
   );
