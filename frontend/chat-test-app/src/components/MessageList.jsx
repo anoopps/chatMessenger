@@ -1,6 +1,8 @@
 import React from "react";
 
 const MessageList = ({ messageList, chatRoomName }) => {
+  console.log("single message => ", messageList);
+
   return (
     <>
       <div className="border-bottom pb-2 mb-3">
@@ -19,7 +21,9 @@ const MessageList = ({ messageList, chatRoomName }) => {
         ) : (
           messageList.map((message, key) => (
             <div className="mb-2" key={key}>
-              <span className="badge bg-primary">{message.user.name}</span>
+              <span className="badge bg-primary">
+                {message.user?.name || "Unknown User"}
+              </span>
               <div className="p-2 bg-secondary text-light rounded mt-1">
                 {message.message}
               </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const LoginForm = ({ setUser, setToken }) => {
   const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ const LoginForm = ({ setUser, setToken }) => {
 
   return (
     <div>
-      <form onSubmit={handelLogin}>
+      <form onSubmit={handelLogin} autoComplete="true">
         <span className="fs-4">
           <h4>Please sign in</h4>
         </span>
@@ -52,6 +53,8 @@ const LoginForm = ({ setUser, setToken }) => {
             className="form-control"
             id="floatingInput"
             value={email}
+            autoComplete="email"
+            name="email"
             onChange={(e) => setEmail(e.target.value)}
           />
           <label>Email address</label>
@@ -63,6 +66,8 @@ const LoginForm = ({ setUser, setToken }) => {
             className="form-control"
             id="floatingPassword"
             value={password}
+            name="password"
+            autoComplete="password"
             onChange={(e) => setPassword(e.target.value)}
           />
           <label>Password</label>
@@ -71,7 +76,7 @@ const LoginForm = ({ setUser, setToken }) => {
         <button className="btn btn-primary w-100 py-2" type="submit">
           Sign in
         </button>
-        <a href="#">Register</a>
+        <Link to="/register">Register</Link>
       </form>
     </div>
   );

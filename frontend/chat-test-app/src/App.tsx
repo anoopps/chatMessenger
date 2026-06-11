@@ -5,6 +5,7 @@ import MessageInput from "./components/MessageInput";
 import MessageList from "./components/MessageList";
 import Profile from "./components/Profile";
 import HomeScreen from "./components/HomeScreen";
+import RegisterForm from "./components/RegisterForm";
 import { apiFetch } from "./utils/api.js";
 import { socket } from "./utils/socket";
 import UserProfile from "./components/UserProfile";
@@ -204,7 +205,78 @@ function App() {
         }
       />
 
-      <Route path="/profile" element={<UserProfile />} />
+      <Route
+        path="/register"
+        element={
+          <div data-bs-theme="dark">
+            <main className="d-flex flex-nowrap">
+              {/* Sidebar Section */}
+              <div
+                className="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary"
+                style={{ width: "20%" }}
+              >
+                {/* Login Form  */}
+                {!token ? (
+                  <LoginForm setUser={setUser} setToken={setToken} />
+                ) : (
+                  <Profile user={user} setUser={setUser} setToken={setToken} />
+                )}
+                {/* Chat room list  */}
+                {token && (
+                  <ChatRoomList
+                    chatrooms={chatrooms}
+                    setSelectChatroom={setSelectChatroom}
+                    token={token}
+                  />
+                )}
+              </div>
+
+              {/* Content Section */}
+              <div className="d-flex flex-column flex-fill p-3 bg-dark text-light">
+                <RegisterForm />
+              </div>
+              <div className="b-example-divider b-example-vr"></div>
+            </main>
+          </div>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <div data-bs-theme="dark">
+            <main className="d-flex flex-nowrap">
+              {/* Sidebar Section */}
+              <div
+                className="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary"
+                style={{ width: "20%" }}
+              >
+                {/* Login Form  */}
+                {!token ? (
+                  <LoginForm setUser={setUser} setToken={setToken} />
+                ) : (
+                  <Profile user={user} setUser={setUser} setToken={setToken} />
+                )}
+                {/* Chat room list  */}
+                {token && (
+                  <ChatRoomList
+                    chatrooms={chatrooms}
+                    setSelectChatroom={setSelectChatroom}
+                    token={token}
+                  />
+                )}
+              </div>
+
+              {/* Content Section */}
+
+              <div className="d-flex flex-column flex-fill p-3 bg-dark text-light">
+                <UserProfile />
+              </div>
+              <div className="b-example-divider b-example-vr"></div>
+            </main>
+          </div>
+        }
+      />
     </Routes>
   );
 }
