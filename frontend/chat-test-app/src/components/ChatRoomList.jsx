@@ -1,14 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ChatRoomList = ({ chatrooms, setSelectChatroom, token }) => {
-  console.log("Inside Chatroom ");
-  console.log(chatrooms);
+  const navigate = useNavigate();
 
   const setMyChatRoom = async (e, roomId) => {
     e.preventDefault();
     console.log(`selected room ${roomId}`);
     setSelectChatroom(roomId);
+    navigate("/");
   };
 
   return (

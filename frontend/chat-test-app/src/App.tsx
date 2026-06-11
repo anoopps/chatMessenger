@@ -78,7 +78,7 @@ function App() {
   useEffect(() => {
     if (!selectChatroom) return;
 
-    alert(`Joining room: chatroom_${selectChatroom}`);
+    // alert(`Joining room: chatroom_${selectChatroom}`);
 
     // socket.emit("join_room", `${selectChatroom}`);
     socket.emit("join_room", selectChatroom);
