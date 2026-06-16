@@ -2,22 +2,18 @@ import React, { useEffect, useState } from "react";
 import { apiFetch } from "../utils/api.js";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const UserProfile = (token) => {
+const UserProfile = ({ token }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    getUserDetails(token);
+    getUserDetails();
   }, []);
 
-  const getUserDetails = async (token) => {
-    if (!token.userToken) return;
-    const response = await apiFetch(
-      `${API_BASE_URL}/user`,
-      "GET",
-      token.userToken
-    );
+  const getUserDetails = async () => {
+    if (!token) return;
+    const response = await apiFetch(`${API_BASE_URL}/user`, "GET", token);
     const user = response.data.userData;
 
     setName(user.name);

@@ -270,7 +270,7 @@ function App() {
               {/* Content Section */}
 
               <div className="d-flex flex-column flex-fill p-3 bg-dark text-light">
-                <UserProfile userToken={token} />
+                <UserProfile token={token} />
               </div>
               <div className="b-example-divider b-example-vr"></div>
             </main>
