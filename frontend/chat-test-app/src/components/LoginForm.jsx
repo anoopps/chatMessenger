@@ -41,10 +41,10 @@ const LoginForm = ({ setUser, setToken }) => {
   };
 
   return (
-    <div>
+    <div className="chatBox">
       <form onSubmit={handelLogin} autoComplete="true">
         <span className="fs-4">
-          <h4>Please sign in</h4>
+          <h4>Sign in to chat</h4>
         </span>
 
         <div className="form-floating">

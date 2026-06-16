@@ -10,3 +10,13 @@ body,
 body {
   color: #fff;
 }
+.chatBox h4 {
+  color: #fff;
+}
+.chatBox {
+  padding: 20px 0px;
+}
+
+.chatBox .form-floating {
+  margin-bottom: 10px;
+}
