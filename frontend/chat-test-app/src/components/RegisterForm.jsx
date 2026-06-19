@@ -48,6 +48,13 @@ const RegisterForm = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
 
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          className="form-control mb-3"
+          onChange={(e) => checkPassword(e.target.value)}
+        />
+
         <a className="btn btn-primary" onClick={registerUserFunction}>
           Register
         </a>

@@ -18,7 +18,7 @@ const UserProfile = ({ token }) => {
 
     setName(user.name);
     setEmail(user.email);
-    setIsActive(user.is_active);
+    setIsActive(user.is_active === 0 ? false : true);
   };
 
   return (
