@@ -25,9 +25,10 @@ const MessageInput = ({ setSendMessage }) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
+          required
         />
         <button className="btn btn-primary" onClick={submitMessage}>
-          Send
+          Send Message
         </button>
       </div>
     </>

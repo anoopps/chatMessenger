@@ -72,10 +72,12 @@ export const sendMessage = async (req: Request, res: Response) => {
         console.log(req.body);
         const chatRoomId = req.params.roomId;
         const userId = req.user?.userId;
+        const userName = req.user?.name;
         const { message } = req.body;
         const io = getIO();
 
         const data = await chatService.validateAndSendMessage(userId, chatRoomId, message);
+        data.name = userName;
 
         const roomName = `chatroom_${chatRoomId}`;
 

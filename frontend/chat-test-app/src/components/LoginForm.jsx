@@ -20,6 +20,8 @@ const LoginForm = ({ setUser, setToken }) => {
 
       const user = await response.json();
 
+      console.log(`Fetched user ${JSON.stringify(user)}`);
+
       if (!response.ok) {
         console.error("Login failed");
         return;
@@ -56,6 +58,7 @@ const LoginForm = ({ setUser, setToken }) => {
             autoComplete="email"
             name="email"
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <label>Email address</label>
         </div>
@@ -69,8 +72,9 @@ const LoginForm = ({ setUser, setToken }) => {
             name="password"
             autoComplete="password"
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
-          <label>Password</label>
+          <label for="floatingPassword">Password</label>
         </div>
 
         <button className="btn btn-primary w-100 py-2" type="submit">

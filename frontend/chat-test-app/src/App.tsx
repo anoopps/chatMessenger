@@ -126,7 +126,8 @@ function App() {
       message,
       createdAt: new Date(),
     };
-
+    console.log(`Test ...`);
+    console.log(tempMessage);
     setMessageList((prev) => [...prev, tempMessage]);
 
     try {

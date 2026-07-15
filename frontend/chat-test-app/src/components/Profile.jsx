@@ -7,6 +7,7 @@ const Profile = ({ user, setUser, setToken }) => {
     setUser(null);
     setToken(null);
   };
+  console.log(`I am loged in ${JSON.stringify(user)}`);
 
   return (
     <>
