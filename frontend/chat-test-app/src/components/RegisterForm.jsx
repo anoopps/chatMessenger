@@ -26,17 +26,18 @@ const RegisterForm = () => {
       }
     );
 
+    console.log(response);
+
     console.log(response.success);
     if (response.success) {
       setSuccessMessage("User registered successfully!");
       setErrorMessage("");
-
       setName("");
       setEmail("");
       setPassword("");
     } else {
       setErrorMessage("Usr registration Failed");
-      setSuccessMessage();
+      setSuccessMessage("");
     }
   };
 
@@ -51,6 +52,7 @@ const RegisterForm = () => {
           className="form-control mb-3"
           onChange={(e) => setName(e.target.value)}
           name="userName"
+          value={name}
           required
         />
 
@@ -60,6 +62,7 @@ const RegisterForm = () => {
           className="form-control mb-3"
           onChange={(e) => setEmail(e.target.value)}
           name="email"
+          value={email}
           required
         />
 
@@ -68,6 +71,7 @@ const RegisterForm = () => {
           placeholder="Password"
           className="form-control mb-3"
           onChange={(e) => setPassword(e.target.value)}
+          value={password}
           required
         />
 

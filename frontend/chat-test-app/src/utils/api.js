@@ -24,9 +24,10 @@ export const apiFetch = async (
   const response = await fetch(url, options);
   console.log("URL:", url);
   console.log("Request:", options);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${type}`);
-  }
+  // console.log(response);
+  // if (!response.ok) {
+  //   throw new Error(`Failed to fetch ${type}`);
+  // }
 
   const result = await response.json();
   return result;

@@ -28,7 +28,9 @@ export const login = async (req: Request, res: Response) => {
 
 export const register = async (req: Request, res: Response) => {
     try {
+
         const { name, email, password } = req.body;
+        console.log(req.body);
 
         // need to validate the name email and password in the route request validation       
         const userObject = { name, email, password };
