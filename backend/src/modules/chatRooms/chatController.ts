@@ -2,6 +2,7 @@
 import { Request, response, Response } from "express";
 import * as chatService from "./chatService";
 import { getIO } from "../../sockets";
+import { getChatRoomSocketName } from "../../sockets/chat.socket";
 import console, { log } from "node:console";
 
 export const createChatRoom = async (req: Request, res: Response) => {
@@ -70,27 +71,33 @@ export const sendMessage = async (req: Request, res: Response) => {
 
     try {
         console.log(req.body);
-        const chatRoomId = req.params.roomId;
+        const chatRoomId = String(req.params.roomId);
         const userId = req.user?.userId;
         const userName = req.user?.name;
         const { message } = req.body;
         const io = getIO();
 
         const data = await chatService.validateAndSendMessage(userId, chatRoomId, message);
-        data.name = userName;
+        const messageData = {
+            ...data,
+            user: {
+                id: userId,
+                name: userName
+            }
+        };
 
-        const roomName = `chatroom_${chatRoomId}`;
+        const roomName = getChatRoomSocketName(chatRoomId);
 
         // Emit to room
-        io.to(roomName).emit("receive_message", data);
-
+        io.to(roomName).emit("receive_message", messageData);
+        console.log(roomName);
         const sockets = await io.in(roomName).fetchSockets();
         console.log("Sockets in room:", sockets.length);
 
         res.status(201).json({
             success: true,
             message: "Message sent successfully",
-            data
+            data: messageData
         });
     } catch (error: any) {
 

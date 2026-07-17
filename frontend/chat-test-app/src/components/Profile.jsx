@@ -7,7 +7,7 @@ const Profile = ({ user, setUser, setToken }) => {
     setUser(null);
     setToken(null);
   };
-  console.log(`I am loged in ${JSON.stringify(user)}`);
+  console.log(`I am logged in ${JSON.stringify(user)}`);
 
   return (
     <>
@@ -25,7 +25,7 @@ const Profile = ({ user, setUser, setToken }) => {
             height="32"
             className="rounded-circle me-2"
           />
-          <strong>Test</strong>
+          <strong>{user?.name?.toUpperCase() || ""}</strong>
         </a>
 
         <ul className="dropdown-menu text-small shadow">

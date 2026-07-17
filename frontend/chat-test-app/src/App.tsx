@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LoginForm from "./components/LoginForm";
 import ChatRoomList from "./components/ChatRoomList";
 import MessageInput from "./components/MessageInput";
@@ -21,7 +21,7 @@ function App() {
   const [chatrooms, setChatrooms] = useState([]);
   const [selectChatroom, setSelectChatroom] = useState(null);
   const [messageList, setMessageList] = useState<any[]>([]);
-  const [sendMessage, setSendMessage] = useState(null);
+  const selectedChatroomRef = useRef<number | null>(null);
 
   useEffect(() => {
     const localToken = localStorage.getItem("token");
@@ -41,15 +41,18 @@ function App() {
     }
   }, []);
 
-  // socket receive message
+  // Register this once. The ref always contains the currently selected room.
   useEffect(() => {
     const handler = (message: any) => {
       console.log("New message received:", message);
-      console.log("Current room:", selectChatroom);
+      console.log("Current room:", selectedChatroomRef.current);
 
-      // Ensure only messages for current room are added
-      if (Number(message.chatroomId) === Number(selectChatroom)) {
-        setMessageList((prev) => [...prev, message]);
+      if (Number(message.chatroomId) === Number(selectedChatroomRef.current)) {
+        setMessageList((prev) =>
+          prev.some((existing) => existing.id === message.id)
+            ? prev
+            : [...prev, message]
+        );
       }
     };
 
@@ -58,20 +61,26 @@ function App() {
     return () => {
       socket.off("receive_message", handler);
     };
-  }, [selectChatroom]);
+  }, []);
 
   // effect to get chatrooms based on token
   useEffect(() => {
     if (!token) return;
 
-    socket.connect();
-
-    socket.on("connect", () => {
+    const handleConnect = () => {
       console.log("Socket connected:", socket.id);
-    });
+      const activeRoom = selectedChatroomRef.current;
+      if (activeRoom) {
+        socket.emit("join_room", activeRoom);
+      }
+    };
+
+    socket.on("connect", handleConnect);
+    socket.connect();
     getChatroom();
 
     return () => {
+      socket.off("connect", handleConnect);
       socket.disconnect();
     };
   }, [token]);
@@ -80,18 +89,30 @@ function App() {
   useEffect(() => {
     if (!selectChatroom) return;
 
-    // alert(`Joining room: chatroom_${selectChatroom}`);
+    const previousRoom = selectedChatroomRef.current;
+    if (previousRoom && Number(previousRoom) !== Number(selectChatroom)) {
+      socket.emit("leave_room", previousRoom);
+    }
 
-    // socket.emit("join_room", `${selectChatroom}`);
-    socket.emit("join_room", selectChatroom);
+    selectedChatroomRef.current = Number(selectChatroom);
+    setMessageList([]);
+    console.log(` Joined the room > ${selectChatroom}`);
+
+    const joinRoom = () => socket.emit("join_room", selectChatroom);
+
+    if (socket.connected) {
+      joinRoom();
+    } else {
+      socket.once("connect", joinRoom);
+    }
+
+    // REST history must remain available even while Socket.IO is reconnecting.
     getMessageList(selectChatroom);
-  }, [selectChatroom]);
 
-  // effect to send message
-  useEffect(() => {
-    if (!sendMessage) return;
-    sendMyMessage(sendMessage);
-  }, [sendMessage]);
+    return () => {
+      socket.off("connect", joinRoom);
+    };
+  }, [selectChatroom]);
 
   const getChatroom = async () => {
     if (!token) return;
@@ -112,23 +133,20 @@ function App() {
         token,
         "message"
       );
-      setMessageList(response.data);
+      if (Number(roomId) !== Number(selectedChatroomRef.current)) return;
+
+      setMessageList((previous) => {
+        const messagesById = new Map();
+        [...response.data, ...previous].forEach((message) => {
+          messagesById.set(message.id, message);
+        });
+        return Array.from(messagesById.values());
+      });
     }
   };
 
   const sendMyMessage = async (message: any) => {
     if (!message) return;
-
-    const tempMessage = {
-      id: Date.now(), // temporary ID
-      chatroomId: selectChatroom,
-      senderId: user?.userId || "me",
-      message,
-      createdAt: new Date(),
-    };
-    console.log(`Test ...`);
-    console.log(tempMessage);
-    setMessageList((prev) => [...prev, tempMessage]);
 
     try {
       const response = await apiFetch(
@@ -181,7 +199,7 @@ function App() {
             ) : (
               <div className="chat-container">
                 <MessageList messageList={messageList} />
-                <MessageInput setSendMessage={setSendMessage} />
+                <MessageInput setSendMessage={sendMyMessage} />
               </div>
             )}
           </MainLayout>
