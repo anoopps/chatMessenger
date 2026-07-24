@@ -20,3 +20,211 @@ body {
 .chatBox .form-floating {
   margin-bottom: 10px;
 }
+
+/* ── Smart Reply Suggestions ─────────────────────────────────────────────── */
+
+.smart-reply-container {
+  padding: 8px 0 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 10px;
+}
+
+.smart-reply-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.smart-reply-icon {
+  font-size: 13px;
+}
+
+.smart-reply-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.smart-reply-refresh {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0 4px;
+  line-height: 1;
+  margin-left: auto;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.smart-reply-refresh:hover {
+  color: rgba(255, 255, 255, 0.75);
+  transform: rotate(-30deg);
+}
+
+/* ── Suggestion chips ──────────────────────────────────────────────────────*/
+
+.smart-reply-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.smart-reply-chip {
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: 20px;
+  color: rgba(200, 200, 255, 0.9);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 5px 14px;
+  transition: background 0.18s, border-color 0.18s, transform 0.12s;
+  white-space: nowrap;
+}
+
+.smart-reply-chip:hover {
+  background: rgba(99, 102, 241, 0.28);
+  border-color: rgba(99, 102, 241, 0.7);
+  transform: translateY(-1px);
+}
+
+.smart-reply-chip:active {
+  transform: translateY(0);
+}
+
+/* ── Loading indicator ─────────────────────────────────────────────────────*/
+
+.smart-reply-loading {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.smart-reply-loading-text {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-left: 4px;
+}
+
+.smart-reply-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.6);
+  animation: smart-reply-bounce 1.2s infinite ease-in-out;
+}
+
+.smart-reply-dot:nth-child(1) { animation-delay: 0s; }
+.smart-reply-dot:nth-child(2) { animation-delay: 0.2s; }
+.smart-reply-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes smart-reply-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%            { transform: scale(1);   opacity: 1;   }
+}
+
+/* ── Error state ───────────────────────────────────────────────────────────*/
+
+.smart-reply-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(252, 165, 165, 0.85);
+}
+
+.smart-reply-error-icon {
+  font-size: 13px;
+}
+
+.smart-reply-retry-btn {
+  background: none;
+  border: 1px solid rgba(252, 165, 165, 0.4);
+  border-radius: 12px;
+  color: rgba(252, 165, 165, 0.85);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 10px;
+  margin-left: 4px;
+  transition: background 0.18s;
+}
+
+.smart-reply-retry-btn:hover {
+  background: rgba(252, 165, 165, 0.1);
+}
+
+/* ── Premium Landing Page Styles ───────────────────────────────────────────*/
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+  letter-spacing: -0.05em;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.3s ease,
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+  height: 100%;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow: 0 10px 30px -10px rgba(168, 85, 247, 0.2);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.feature-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.feature-list li {
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.feature-list li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #a855f7;
+}

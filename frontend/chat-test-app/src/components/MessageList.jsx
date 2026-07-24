@@ -10,10 +10,7 @@ const MessageList = ({ messageList, chatRoomName }) => {
       </div>
 
       {/* Messages Area */}
-      <div
-        className="flex-grow-1 overflow-auto mb-3"
-        style={{ maxHeight: "70vh" }}
-      >
+      <div className="flex-grow-1 overflow-auto mb-3">
         {messageList.length === 0 ? (
           <div className="text-center text-muted mt-4">
             You have no messages

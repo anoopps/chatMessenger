@@ -44,7 +44,7 @@ const LoginForm = ({ setUser, setToken }) => {
 
   return (
     <div className="chatBox">
-      <form onSubmit={handelLogin} autoComplete="true">
+      <form onSubmit={handelLogin} autoComplete="on">
         <span className="fs-4">
           <h4>Sign in to chat</h4>
         </span>
@@ -55,12 +55,12 @@ const LoginForm = ({ setUser, setToken }) => {
             className="form-control"
             id="floatingInput"
             value={email}
-            autoComplete="email"
+            autoComplete="username"
             name="email"
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <label>Email address</label>
+          <label htmlFor="floatingInput">Email address</label>
         </div>
 
         <div className="form-floating">
@@ -70,11 +70,11 @@ const LoginForm = ({ setUser, setToken }) => {
             id="floatingPassword"
             value={password}
             name="password"
-            autoComplete="password"
+            autoComplete="current-password"
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <label for="floatingPassword">Password</label>
+          <label htmlFor="floatingPassword">Password</label>
         </div>
 
         <button className="btn btn-primary w-100 py-2" type="submit">

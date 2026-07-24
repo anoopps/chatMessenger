@@ -3,6 +3,7 @@ import LoginForm from "./components/LoginForm";
 import ChatRoomList from "./components/ChatRoomList";
 import MessageInput from "./components/MessageInput";
 import MessageList from "./components/MessageList";
+import SmartReplySuggestions from "./components/SmartReplySuggestions";
 import Profile from "./components/Profile";
 import HomeScreen from "./components/HomeScreen";
 import RegisterForm from "./components/RegisterForm";
@@ -22,6 +23,22 @@ function App() {
   const [selectChatroom, setSelectChatroom] = useState(null);
   const [messageList, setMessageList] = useState<any[]>([]);
   const selectedChatroomRef = useRef<number | null>(null);
+
+  // prefillMessage: set by SmartReplySuggestions when the user clicks a chip.
+  // Consumed by MessageInput via a useEffect inside that component.
+  // Reset to "" after MessageInput signals it has applied the value.
+  const [prefillMessage, setPrefillMessage] = useState("");
+
+  // Called when a suggestion chip is clicked.
+  const handleSuggestionSelect = (text: string) => {
+    setPrefillMessage(text);
+  };
+
+  // Called by MessageInput after it has applied the prefill, so we don't
+  // re-trigger the effect on subsequent re-renders.
+  const handlePrefillConsumed = () => {
+    setPrefillMessage("");
+  };
 
   useEffect(() => {
     const localToken = localStorage.getItem("token");
@@ -197,9 +214,23 @@ function App() {
             {!token ? (
               <HomeScreen />
             ) : (
-              <div className="chat-container">
+              <div className="chat-container d-flex flex-column h-100">
                 <MessageList messageList={messageList} />
-                <MessageInput setSendMessage={sendMyMessage} />
+
+                {/* Smart Reply Suggestions — shown only when a room is active */}
+                {selectChatroom && (
+                  <SmartReplySuggestions
+                    roomId={selectChatroom}
+                    token={token}
+                    onSelectSuggestion={handleSuggestionSelect}
+                  />
+                )}
+
+                <MessageInput
+                  setSendMessage={sendMyMessage}
+                  prefillMessage={prefillMessage}
+                  onPrefillConsumed={handlePrefillConsumed}
+                />
               </div>
             )}
           </MainLayout>
